@@ -76,10 +76,14 @@
 						<arg>-Xjsr305=strict</arg>
 					</args>
 					<compilerPlugins>
+						<plugin>jpa</plugin>
 						<plugin>spring</plugin>
 					</compilerPlugins>
 				</configuration>
 				<dependencies>
+					<dependency>
+						<groupId>org.jetbrains.kotlin</groupId>
+					</dependency>
 					<dependency>
 						<groupId>org.jetbrains.kotlin</groupId>
 						<artifactId>kotlin-maven-allopen</artifactId>
