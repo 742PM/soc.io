@@ -1,6 +1,5 @@
 import me.ruslanys.telegraff.core.dsl.handler
 import me.ruslanys.telegraff.core.dto.request.MarkdownMessage
-import handlers.WelcomeConstants
 import me.ruslanys.telegraff.core.exception.ValidationException
 
 enum class WantTalk {
@@ -8,9 +7,10 @@ enum class WantTalk {
 }
 
 handler("/start", "/talk") {
+
     step<WantTalk>("welcome") {
         question { state ->
-            MarkdownMessage(WelcomeConstants.WelcomeMessage, "Да", "Нет")
+            MarkdownMessage("Привет дорогой друг. Хочешь пообщаться?", "Да", "Нет")
         }
 
         validation {
@@ -32,7 +32,7 @@ handler("/start", "/talk") {
 
         if (wantTalk == WantTalk.Yes) {
             MarkdownMessage("""
-                Заявка принята от пользователя #${state.chat.id}. 
+                Заявка принята от пользователя #${state.chat.id}.
                 Ищем собеседника.
             """.trimIndent())
         } else {
