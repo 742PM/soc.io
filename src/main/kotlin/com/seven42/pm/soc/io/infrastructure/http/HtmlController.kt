@@ -1,4 +1,4 @@
-package com.seven42.pm.soc.io
+package com.seven42.pm.soc.io.infrastructure.http
 
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
