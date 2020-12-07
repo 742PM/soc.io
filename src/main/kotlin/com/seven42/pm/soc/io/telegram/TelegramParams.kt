@@ -11,6 +11,6 @@ class TelegramParams {
 
         private const val Port: Int = 8443
 
-        const val Webhook: String = "https://0.0.0.0:$Port"
+        const val Webhook: String = "https://soc-io.herokuapp.com:$Port"
     }
 }
