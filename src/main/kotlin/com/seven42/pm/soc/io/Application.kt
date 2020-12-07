@@ -10,18 +10,22 @@ import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook
 import org.telegram.telegrambots.meta.generics.Webhook
 import org.telegram.telegrambots.updatesreceivers.DefaultWebhook
 
-fun getWebhook(): Webhook {
-	val webhook = DefaultWebhook()
-	webhook.setInternalUrl(TelegramParams.Webhook)
-	return webhook
-}
+open class Application {
+	companion object {
+		@JvmStatic fun main(args: Array<String>) {
+			try {
+				val telegramBotsApi = TelegramBotsApi(DefaultBotSession::class.java, getWebhook())
+				val setWebhook = SetWebhook(TelegramParams.Url)
+				telegramBotsApi.registerBot(TelegramBot(DefaultBotOptions()), setWebhook)
+			} catch (e: TelegramApiException) {
+				e.printStackTrace()
+			}
+		}
 
-fun main(args: Array<String>) {
-	try {
-		val telegramBotsApi = TelegramBotsApi(DefaultBotSession::class.java, getWebhook())
-		val setWebhook = SetWebhook(TelegramParams.Url)
-		telegramBotsApi.registerBot(TelegramBot(DefaultBotOptions()), setWebhook)
-	} catch (e: TelegramApiException) {
-		e.printStackTrace()
+		private fun getWebhook(): Webhook {
+			val webhook = DefaultWebhook()
+			webhook.setInternalUrl(TelegramParams.Webhook)
+			return webhook
+		}
 	}
 }
