@@ -12,7 +12,7 @@ class TelegramBot : TelegramWebhookBot() {
 
     override fun getBotUsername(): String = TelegramParams.Username
 
-    override fun getBotPath(): String = TelegramParams.Token
+    override fun getBotPath(): String = "/$TelegramParams.Token"
 
     override fun onWebhookUpdateReceived(update: Update): BotApiMethod<*>? {
         if (update.hasMessage() && update.message.hasText()) {
