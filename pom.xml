@@ -56,13 +56,6 @@
 			<artifactId>kotlin-reflect</artifactId>
 		</dependency>
 
-
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>com.ninja-squad</groupId>
 			<artifactId>springmockk</artifactId>
