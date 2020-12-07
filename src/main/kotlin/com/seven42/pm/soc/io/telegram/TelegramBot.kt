@@ -1,12 +1,13 @@
 package com.seven42.pm.soc.io.telegram
 
-import org.telegram.telegrambots.bots.DefaultBotOptions
+import org.springframework.stereotype.Service
 import org.telegram.telegrambots.bots.TelegramWebhookBot
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
-class TelegramBot(options: DefaultBotOptions?) : TelegramWebhookBot(options) {
+@Service
+class TelegramBot : TelegramWebhookBot() {
     override fun getBotToken(): String = TelegramParams.Token
 
     override fun getBotUsername(): String = TelegramParams.Username
