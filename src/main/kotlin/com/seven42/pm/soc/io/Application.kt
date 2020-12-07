@@ -15,7 +15,7 @@ open class Application {
 		@JvmStatic fun main(args: Array<String>) {
 			try {
 				val telegramBotsApi = TelegramBotsApi(DefaultBotSession::class.java, getWebhook())
-				val setWebhook = SetWebhook(TelegramParams.Url)
+				val setWebhook = SetWebhook(TelegramParams.Webhook)
 				telegramBotsApi.registerBot(TelegramBot(DefaultBotOptions()), setWebhook)
 			} catch (e: TelegramApiException) {
 				e.printStackTrace()
