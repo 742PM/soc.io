@@ -8,9 +8,5 @@ class TelegramParams {
         val Url: String = "https://soc-io.herokuapp.com/$Token"
 
         const val Username: String = "SocSocBot"
-
-        private const val Port: Int = 8443
-
-        const val Webhook: String = "https://soc-io.herokuapp.com"
     }
 }
