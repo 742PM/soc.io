@@ -1,4 +1,5 @@
 FROM maven:3.6.3-jdk-11 as backend
+WORKDIR /
 RUN mvn clean verify -DskipTests=true
 
 FROM openjdk:14-jdk-alpine
