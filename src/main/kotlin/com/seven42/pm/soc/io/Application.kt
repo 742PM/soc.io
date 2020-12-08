@@ -1,11 +1,12 @@
 package com.seven42.pm.soc.io
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
+import com.seven42.pm.soc.io.telegram.TelegramBot
+import org.telegram.telegrambots.meta.TelegramBotsApi
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 
-@SpringBootApplication
 class Application
 
 fun main(args: Array<String>) {
-	runApplication<Application>(*args)
+	val telegramBotsApi = TelegramBotsApi(DefaultBotSession::class.java)
+	telegramBotsApi.registerBot(TelegramBot())
 }
