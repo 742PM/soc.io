@@ -29,3 +29,4 @@ jobs:
         app_name: ${{ secrets.HEROKU_APP_NAME }}
         dockerfile_path: ''
         options: ''
+        formation: 'worker'
