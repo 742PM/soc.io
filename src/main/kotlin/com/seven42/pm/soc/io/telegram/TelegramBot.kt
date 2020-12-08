@@ -1,10 +1,10 @@
 package com.seven42.pm.soc.io.telegram
 
+import com.seven42.pm.soc.io.telegram.commands.BotCommand
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
-class TelegramBot : TelegramLongPollingBot() {
+class TelegramBot(private vararg val commands: BotCommand) : TelegramLongPollingBot() {
     override fun getBotToken(): String = TelegramParams.Token
 
     override fun getBotUsername(): String = TelegramParams.Username
@@ -13,11 +13,8 @@ class TelegramBot : TelegramLongPollingBot() {
         if (!update.hasMessage() || !update.message.hasText())
             return
 
-        val sendMessage = SendMessage
-                .builder()
-                .chatId(update.message.chatId.toString())
-                .text("ы".repeat(update.message.text.length))
-                .build()
-        execute(sendMessage)
+        val command = commands.firstOrNull { it.isValid(update.message.text) } ?: return
+
+        command.execute(this, update.message.text, update.message.chatId)
     }
 }
