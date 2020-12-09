@@ -1,6 +1,5 @@
 package com.seven42.pm.soc.io.telegram.commands
 
-import com.seven42.pm.soc.io.telegram.KeyboardButtons
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup
@@ -16,17 +15,21 @@ abstract class BotCommand {
     abstract fun getKeyboardButtons(): List<String>
 
     fun execute(bot: AbsSender, userMessage: String, chatId: Long) {
+        val receiverChatId = getReceiverChatId(chatId)
+        val messageText = getMessageText(userMessage)
         val keyboard = buildKeyboard(getKeyboardButtons())
 
         val sendMessage = SendMessage
                 .builder()
-                .chatId(chatId.toString())
-                .text(getMessageText(userMessage))
+                .chatId(receiverChatId)
+                .text(messageText)
                 .replyMarkup(keyboard)
                 .build()
 
         bot.execute(sendMessage)
     }
+
+    protected open fun getReceiverChatId(senderChatId: Long): String = senderChatId.toString()
 
     private fun buildKeyboard(buttons: List<String>): ReplyKeyboard {
         if (buttons.isEmpty())
