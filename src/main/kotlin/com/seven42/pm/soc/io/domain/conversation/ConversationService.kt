@@ -11,10 +11,16 @@ class ConversationService(val socialQueue: SocialQueue) {
     /** Завершает диалог для обоих пользователей и пытается найти собеседника для [[userId]]*/
     fun ChangeHuman(userId: UserId): Boolean =  TODO()
 
-    /**  Пытается найти собеседника для [[userId]] */
-    //TODO подумать про event-based штуку или асинхронные таски и шо в котлине, потому что ну не будет же эта херня лочить тред
-
+    /**  Пытается найти собеседника для [[userId]]
+     *
+     * Если в системе в текущий момент есть собеседник, то начинает диалог с ним и возвращает `true`.
+     * Иначе добавляет пользователя в список ожидания и возвращает `false`.
+     */
     fun StartDialog(user: User): Boolean = TODO()
 
     fun GetCurrentInterlocutorInfo(userId: UserId): TelegramUserInfo = TODO()
+
+    fun IsInDialog(userId: UserId): Boolean = TODO()
+
+    fun HasInterlocutor(userId: UserId): Boolean = TODO()
 }
