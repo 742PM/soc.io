@@ -23,7 +23,6 @@ class SqlQueueRepository {
     fun put(user: User): Unit {
         logger.info("Inserting ${user.id} in $UsersQueueTable")
         UserModel.insert {
-            it[name] = user.name
             it[id] = user.id.value
         }
     }
@@ -47,11 +46,9 @@ class SqlQueueRepository {
 }
 
 object UserModel : Table(UsersQueueTable) {
-    val name = text("name")
     val id = text("id")
 }
 
 private fun userFromResult(it: ResultRow) = User(
-        id = UserId(it[UserModel.id]),
-        name = it[UserModel.name]
+        id = UserId(it[UserModel.id])
 )

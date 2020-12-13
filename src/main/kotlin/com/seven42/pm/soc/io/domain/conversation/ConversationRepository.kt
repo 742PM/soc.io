@@ -1,12 +1,8 @@
 package com.seven42.pm.soc.io.domain.conversation
 
 import com.seven42.pm.soc.io.domain.UserId
-import com.seven42.pm.soc.io.domain.queue.UserModel
-import com.seven42.pm.soc.io.domain.queue.UsersQueueTable
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNotNull
-import java.time.LocalDate
-import java.time.ZonedDateTime
+import org.joda.time.DateTime
 
 interface ConversationRepository {
     //сюда добавим методов на чтение по необходимости
@@ -39,6 +35,15 @@ class SqlConversationRepository {
         }
     }
 
+    fun update(info: ConversationMetaInformation) {
+        ConversationInfo.update({ ConversationInfo.id eq info.id.value }) {
+            it[user_from_id] = info.firstInterlocutor.value
+            it[user_to_id] = info.secondInterlocutor.value
+            it[startedAt] = info.startedAt
+            it[endAt] = info.endedAt
+        }
+    }
+
     fun find(id: ConversationId): ConversationMetaInformation? {
         val info = ConversationInfo
                 .select { ConversationInfo.id eq id.value }
@@ -58,7 +63,10 @@ class SqlConversationRepository {
 
     fun findForUser(userId: UserId): ConversationMetaInformation? {
         val info = ConversationInfo
-                .select { (ConversationInfo.user_from_id eq userId.value) or (ConversationInfo.user_to_id eq userId.value) }
+                .select {
+                    (ConversationInfo.user_from_id eq userId.value and ConversationInfo.endAt.isNull()) or
+                            (ConversationInfo.user_to_id eq userId.value and ConversationInfo.endAt.isNull())
+                }
                 .limit(1)
                 .firstOrNull()
         if (info != null) {
@@ -75,3 +83,6 @@ private fun conversationInfoFromResult(it: ResultRow) = ConversationMetaInformat
         startedAt = it[ConversationInfo.startedAt],
         endedAt = it[ConversationInfo.endAt]
 )
+
+data class ConversationMetaInformation(val id: ConversationId, val firstInterlocutor: UserId, val secondInterlocutor: UserId, val startedAt: DateTime, val endedAt: DateTime)
+inline class ConversationId(val value: String)
