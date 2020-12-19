@@ -6,42 +6,45 @@ import org.jetbrains.exposed.sql.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+
 interface QueueRepository {
-    //сюда добавим методов на чтение по необходимости
-    //cхема такая:
-    // | айди юзера |
-    fun put(user: User): Unit
-    fun remove(user: User): Unit
-    fun all(user: User): List<User>
-    fun contains(user: User): Boolean
+
+    fun remove(userId: UserId): Unit
+    fun contains(userId: UserId): Boolean
+    fun all(): List<UserId>
+    fun put(user: UserId): Unit
 }
 
 const val UsersQueueTable = "users_queue"
 
-class SqlQueueRepository {
+class SqlQueueRepository : QueueRepository {
     private val logger: Logger = LoggerFactory.getLogger(SqlQueueRepository::class.java)
-    fun put(user: User): Unit {
-        logger.info("Inserting ${user.id} in $UsersQueueTable")
+
+
+    override fun put(user: UserId): Unit {
+        logger.info("Inserting ${user} in $UsersQueueTable")
         UserModel.insert {
-            it[id] = user.id.value
+            it[id] = user.value
         }
     }
 
-    fun remove(user: User): Unit {
-        logger.info("Removing ${user.id} from $UsersQueueTable")
+    override fun remove(userId: UserId) {
+        logger.info("Removing $userId from $UsersQueueTable")
         UserModel.deleteWhere {
-            UserModel.id eq user.id.value
+            UserModel.id eq userId.value
         }
     }
 
-    fun all(): List<User> {
+
+
+    override fun all(): List<UserId> {
         logger.info("Getting all users from $UsersQueueTable")
-        return UserModel.selectAll().map { userFromResult(it) }
+        return UserModel.selectAll().map { userFromResult(it).id }
     }
 
-    fun contains(user: User): Boolean {
-        logger.info("Checking if ${user.id} in $UsersQueueTable")
-        return all().contains(user)
+    override fun contains(userId: UserId): Boolean {
+        logger.info("Checking if ${userId} in $UsersQueueTable")
+        return all().contains(userId)
     }
 }
 
