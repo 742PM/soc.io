@@ -16,7 +16,7 @@ interface ConversationService {
     fun StopDialog(userId: UserId)
 
     /** Завершает диалог для обоих пользователей и пытается найти собеседника для [[userId]]*/
-    fun ChangeHuman(userId: UserId)
+    fun ChangeInterlocutor(userId: UserId)
 
     /** Собирает пары собеседников из всех пользователей в очереди */
     fun StartDialog(): List<UserId>
@@ -67,7 +67,7 @@ class ConversationServiceImpl(
 
     }
 
-    override fun ChangeHuman(userId: UserId) {
+    override fun ChangeInterlocutor(userId: UserId) {
         val conversation = conversationRepository.findForUser(userId)
         if (conversation != null) {
             conversationRepository.update(

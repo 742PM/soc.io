@@ -6,10 +6,7 @@ import com.seven42.pm.soc.io.domain.conversation.SqlConversationRepository
 import com.seven42.pm.soc.io.domain.queue.Queue
 import com.seven42.pm.soc.io.domain.queue.SqlQueueRepository
 import com.seven42.pm.soc.io.telegram.TelegramBot
-import com.seven42.pm.soc.io.telegram.commands.DequeueCommand
-import com.seven42.pm.soc.io.telegram.commands.EnqueueCommand
-import com.seven42.pm.soc.io.telegram.commands.StartCommand
-import com.seven42.pm.soc.io.telegram.commands.ЫCommand
+import com.seven42.pm.soc.io.telegram.commands.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -39,7 +36,9 @@ fun main(args: Array<String>) {
 			StartCommand(),
 			EnqueueCommand(conversationService),
 			DequeueCommand(conversationService),
-			ЫCommand()
+			ChangeDialogCommand(conversationService),
+			StopDialogCommand(conversationService),
+			ResendCommand(conversationService)
 	)
 
 	telegramBotsApi.registerBot(bot)
