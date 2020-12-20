@@ -25,7 +25,7 @@ inline class ConversationId(val value: String)
 
 const val ConversationsTable = "conversations"
 
-object ConversationInfo : Table(ConversationsTable) {
+object Conversations : Table(ConversationsTable) {
     val id = text("conversations_id") // TODO make auto generation for id?
     val user_from_id = text("user_from_id")
     val user_to_id = text("user_to_id")
@@ -36,7 +36,7 @@ object ConversationInfo : Table(ConversationsTable) {
 class SqlConversationRepository : ConversationRepository {
     override fun insert(info: ConversationMetaInformation) {
         transaction {
-            ConversationInfo.insert {
+            Conversations.insert {
                 it[id] = info.id.value
                 it[user_from_id] = info.firstInterlocutor.value
                 it[user_to_id] = info.secondInterlocutor.value
@@ -48,7 +48,7 @@ class SqlConversationRepository : ConversationRepository {
 
     override fun update(info: ConversationMetaInformation) {
         transaction {
-            ConversationInfo.update({ ConversationInfo.id eq info.id.value }) {
+            Conversations.update({ Conversations.id eq info.id.value }) {
                 it[user_from_id] = info.firstInterlocutor.value
                 it[user_to_id] = info.secondInterlocutor.value
                 it[startedAt] = info.startedAt
@@ -58,8 +58,8 @@ class SqlConversationRepository : ConversationRepository {
     }
 
     override fun find(id: ConversationId): ConversationMetaInformation? = transaction {
-        val info = ConversationInfo
-                .select { ConversationInfo.id eq id.value }
+        val info = Conversations
+                .select { Conversations.id eq id.value }
                 .limit(1)
                 .firstOrNull()
         if (info != null) {
@@ -69,16 +69,16 @@ class SqlConversationRepository : ConversationRepository {
     }
 
     override fun all(): List<ConversationMetaInformation> = transaction {
-        ConversationInfo
+        Conversations
                 .selectAll()
                 .map { conversationInfoFromResult(it) }
     }
 
     override fun findForUser(userId: UserId): ConversationMetaInformation? = transaction {
-        val info = ConversationInfo
+        val info = Conversations
                 .select {
-                    (ConversationInfo.user_from_id eq userId.value and ConversationInfo.endAt.isNull()) or
-                            (ConversationInfo.user_to_id eq userId.value and ConversationInfo.endAt.isNull())
+                    (Conversations.user_from_id eq userId.value and Conversations.endAt.isNull()) or
+                            (Conversations.user_to_id eq userId.value and Conversations.endAt.isNull())
                 }
                 .limit(1)
                 .firstOrNull()
@@ -90,9 +90,9 @@ class SqlConversationRepository : ConversationRepository {
 }
 
 private fun conversationInfoFromResult(it: ResultRow) = ConversationMetaInformation(
-        id = ConversationId(it[ConversationInfo.id]),
-        firstInterlocutor = UserId(it[ConversationInfo.user_from_id]),
-        secondInterlocutor = UserId(it[ConversationInfo.user_to_id]),
-        startedAt = it[ConversationInfo.startedAt],
-        endedAt = it[ConversationInfo.endAt]
+        id = ConversationId(it[Conversations.id]),
+        firstInterlocutor = UserId(it[Conversations.user_from_id]),
+        secondInterlocutor = UserId(it[Conversations.user_to_id]),
+        startedAt = it[Conversations.startedAt],
+        endedAt = it[Conversations.endAt]
 )

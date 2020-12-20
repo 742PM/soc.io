@@ -126,7 +126,7 @@ class ConversationServiceImpl(
     }
 
     override fun LeaveQueue(userId: UserId): Boolean {
-        if (queueRepository.contains(userId))
+        if (!queueRepository.contains(userId))
             return false
 
         queueRepository.remove(userId)

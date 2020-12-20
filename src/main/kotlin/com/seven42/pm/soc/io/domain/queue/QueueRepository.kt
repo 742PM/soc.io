@@ -21,11 +21,10 @@ const val UsersQueueTable = "users_queue"
 class SqlQueueRepository : QueueRepository {
     private val logger: Logger = LoggerFactory.getLogger(SqlQueueRepository::class.java)
 
-
     override fun put(user: UserId): Unit {
         logger.info("Inserting ${user} in $UsersQueueTable")
         transaction {
-            UserModel.insert {
+            Queue.insert {
                 it[id] = user.value
             }
         }
@@ -34,17 +33,16 @@ class SqlQueueRepository : QueueRepository {
     override fun remove(userId: UserId) {
         logger.info("Removing $userId from $UsersQueueTable")
         transaction {
-            UserModel.deleteWhere {
-                UserModel.id eq userId.value
+            Queue.deleteWhere {
+                Queue.id eq userId.value
             }
         }
     }
 
-
     override fun all(): List<UserId> {
         logger.info("Getting all users from $UsersQueueTable")
         return transaction {
-            UserModel.selectAll().map { userFromResult(it).id }
+            Queue.selectAll().map { userFromResult(it).id }
         }
     }
 
@@ -56,10 +54,10 @@ class SqlQueueRepository : QueueRepository {
     }
 }
 
-object UserModel : Table(UsersQueueTable) {
+object Queue : Table(UsersQueueTable) {
     val id = text("id")
 }
 
 private fun userFromResult(it: ResultRow) = User(
-        id = UserId(it[UserModel.id])
+        id = UserId(it[Queue.id])
 )

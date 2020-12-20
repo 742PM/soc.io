@@ -1,7 +1,9 @@
 package com.seven42.pm.soc.io
 
 import com.seven42.pm.soc.io.domain.conversation.ConversationServiceImpl
+import com.seven42.pm.soc.io.domain.conversation.Conversations
 import com.seven42.pm.soc.io.domain.conversation.SqlConversationRepository
+import com.seven42.pm.soc.io.domain.queue.Queue
 import com.seven42.pm.soc.io.domain.queue.SqlQueueRepository
 import com.seven42.pm.soc.io.telegram.TelegramBot
 import com.seven42.pm.soc.io.telegram.commands.DequeueCommand
@@ -9,6 +11,8 @@ import com.seven42.pm.soc.io.telegram.commands.EnqueueCommand
 import com.seven42.pm.soc.io.telegram.commands.StartCommand
 import com.seven42.pm.soc.io.telegram.commands.ЫCommand
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 
@@ -22,6 +26,10 @@ fun main(args: Array<String>) {
 			"org.postgresql.Driver",
 			System.getenv("JDBC_DATABASE_USERNAME"),
 			System.getenv("JDBC_DATABASE_PASSWORD"))
+
+	transaction {
+		SchemaUtils.create(Queue, Conversations)
+	}
 
 	val conversationRepository = SqlConversationRepository()
 	val queueRepository = SqlQueueRepository()
