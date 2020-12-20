@@ -83,9 +83,23 @@ class ConversationService(val conversationRepository: ConversationRepository, va
         }
     }
 
-    fun GetCurrentInterlocutorInfo(userId: UserId): TelegramUserInfo =
-        TODO() //TODO idk how to implement it yet. I guess we should add another field somewhere or decide how to convert one id to another
+    fun GetCurrentInterlocutorInfo(userId: UserId): UserId {
+        val conversation = conversationRepository.findForUser(userId)
+        if (conversation != null) {
+            return if (conversation.firstInterlocutor == userId)
+                conversation.secondInterlocutor
+            else
+                conversation.firstInterlocutor
+        } else {
+            throw Exception("User is in no dialog")
 
+        }
+    }
+
+    fun LeaveQueue(userId: UserId) {
+        if (queueRepository.contains(userId))
+            queueRepository.remove(userId)
+    }
 
     fun IsInQueue(userId: UserId): Boolean {
         return queueRepository.contains(userId)
