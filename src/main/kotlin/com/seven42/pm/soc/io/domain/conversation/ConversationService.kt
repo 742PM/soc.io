@@ -18,12 +18,8 @@ interface ConversationService {
     /** Завершает диалог для обоих пользователей и пытается найти собеседника для [[userId]]*/
     fun ChangeHuman(userId: UserId)
 
-    /**  Пытается найти собеседника для [[userId]]
-     *
-     * Если в системе в текущий момент есть собеседник, то начинает диалог с ним и возвращает `true`.
-     * Иначе добавляет пользователя в список ожидания и возвращает `false`.
-     */
-    fun StartDialog(user: UserId): Boolean
+    /** Собирает пары собеседников из всех пользователей в очереди */
+    fun StartDialog(): List<UserId>
 
     /** Добавляет пользователя в очередь
      *
@@ -91,25 +87,22 @@ class ConversationServiceImpl(
     }
 
 
-    override fun StartDialog(user: UserId): Boolean {
+    override fun StartDialog(): List<UserId> {
         val all = queueRepository.all()
-        if (all.isNotEmpty()) {
-            val interlocutor = all.filter { it != user }.random()
+        return all.shuffled().windowed(2, 2).filter { it.size == 2 }.map {
             conversationRepository.insert(
                 ConversationMetaInformation(
                     ConversationId(UUID.randomUUID().toString()),
-                    user,
-                    interlocutor,
+                    it[0],
+                    it[1],
                     DateTime.now(),
                     null
                 )
             )
-            queueRepository.remove(interlocutor)
-            return true
-        } else {
-            queueRepository.put(user)
-            return false
-        }
+            queueRepository.remove(it[0])
+            queueRepository.remove(it[1])
+            it
+        }.flatten()
     }
 
     override fun EnterQueue(userId: UserId): Boolean {
