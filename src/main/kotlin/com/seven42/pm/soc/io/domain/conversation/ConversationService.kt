@@ -23,10 +23,21 @@ interface ConversationService {
      * Если в системе в текущий момент есть собеседник, то начинает диалог с ним и возвращает `true`.
      * Иначе добавляет пользователя в список ожидания и возвращает `false`.
      */
-    fun StartDialog(user: User): Boolean
+    fun StartDialog(user: UserId): Boolean
+
+    /** Добавляет пользователя в очередь
+     *
+     * Если пользователь уже в очереди, то возвращает false, иначе true
+     */
+    fun EnterQueue(userId: UserId): Boolean
     fun HasInterlocutor(userId: UserId): Boolean
     fun IsInQueue(userId: UserId): Boolean
-    fun LeaveQueue(userId: UserId)
+
+    /** Удаляет пользователя из очереди
+     *
+     * Если пользователь уже вне очереди, то возвращает false, иначе true
+     */
+    fun LeaveQueue(userId: UserId): Boolean
     fun GetCurrentInterlocutorInfo(userId: UserId): UserId
 }
 
@@ -80,14 +91,14 @@ class ConversationServiceImpl(
     }
 
 
-    override fun StartDialog(user: User): Boolean {
+    override fun StartDialog(user: UserId): Boolean {
         val all = queueRepository.all()
         if (all.isNotEmpty()) {
-            val interlocutor = all.filter { it != user.id }.random()
+            val interlocutor = all.filter { it != user }.random()
             conversationRepository.insert(
                 ConversationMetaInformation(
                     ConversationId(UUID.randomUUID().toString()),
-                    user.id,
+                    user,
                     interlocutor,
                     DateTime.now(),
                     null
@@ -96,9 +107,16 @@ class ConversationServiceImpl(
             queueRepository.remove(interlocutor)
             return true
         } else {
-            queueRepository.put(user.id)
+            queueRepository.put(user)
             return false
         }
+    }
+
+    override fun EnterQueue(userId: UserId): Boolean {
+        if (queueRepository.contains(userId))
+            return false
+        queueRepository.put(userId)
+        return true
     }
 
     override fun GetCurrentInterlocutorInfo(userId: UserId): UserId {
@@ -114,9 +132,12 @@ class ConversationServiceImpl(
         }
     }
 
-    override fun LeaveQueue(userId: UserId) {
+    override fun LeaveQueue(userId: UserId): Boolean {
         if (queueRepository.contains(userId))
-            queueRepository.remove(userId)
+            return false
+
+        queueRepository.remove(userId)
+        return true
     }
 
     override fun IsInQueue(userId: UserId): Boolean {
