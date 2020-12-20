@@ -28,11 +28,12 @@ class StopDialogCommand(private val conversationService: ConversationService) : 
 
         conversationService.StopDialog(userId)
 
+        val keyboard = buildKeyboard(listOf(KeyboardButtons.StopSearch))
         val sendMessage = SendMessage
                 .builder()
                 .chatId(interlocutor.value)
                 .text(interlocutorMessage)
-                .replyMarkup(buildKeyboard(getKeyboardButtons()))
+                .replyMarkup(keyboard)
                 .build()
         bot.execute(sendMessage)
     }

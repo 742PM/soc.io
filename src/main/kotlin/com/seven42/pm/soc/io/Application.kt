@@ -5,6 +5,7 @@ import com.seven42.pm.soc.io.domain.conversation.Conversations
 import com.seven42.pm.soc.io.domain.conversation.SqlConversationRepository
 import com.seven42.pm.soc.io.domain.queue.Queue
 import com.seven42.pm.soc.io.domain.queue.SqlQueueRepository
+import com.seven42.pm.soc.io.telegram.QueueManager
 import com.seven42.pm.soc.io.telegram.TelegramBot
 import com.seven42.pm.soc.io.telegram.commands.*
 import org.jetbrains.exposed.sql.Database
@@ -40,6 +41,9 @@ fun main(args: Array<String>) {
 			StopDialogCommand(conversationService),
 			ResendCommand(conversationService)
 	)
+
+	val queueManager = QueueManager(conversationService, bot, StartDialogCommand())
+	queueManager.run()
 
 	telegramBotsApi.registerBot(bot)
 }

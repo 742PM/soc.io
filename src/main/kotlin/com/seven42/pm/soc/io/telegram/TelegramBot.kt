@@ -17,6 +17,6 @@ class TelegramBot(private vararg val commands: BotCommand) : TelegramLongPolling
         val userId = UserId(update.message.chatId.toString())
         val command = commands.firstOrNull { it.isValid(update.message.text, userId) } ?: return
 
-        command.execute(this, update.message.text, update.message.chatId)
+        command.execute(this, update.message.text, userId)
     }
 }

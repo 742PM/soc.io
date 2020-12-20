@@ -74,18 +74,20 @@ class SqlConversationRepository : ConversationRepository {
                 .map { conversationInfoFromResult(it) }
     }
 
-    override fun findForUser(userId: UserId): ConversationMetaInformation? = transaction {
-        val info = Conversations
-                .select {
-                    (Conversations.user_from_id eq userId.value and Conversations.endAt.isNull()) or
-                            (Conversations.user_to_id eq userId.value and Conversations.endAt.isNull())
-                }
-                .limit(1)
-                .firstOrNull()
-        if (info != null) {
-            conversationInfoFromResult(info)
+    override fun findForUser(userId: UserId): ConversationMetaInformation? {
+        val info = transaction {
+            Conversations
+                    .select {
+                        (Conversations.user_from_id eq userId.value and Conversations.endAt.isNull()) or
+                                (Conversations.user_to_id eq userId.value and Conversations.endAt.isNull())
+                    }
+                    .limit(1)
+                    .firstOrNull()
         }
-        null
+        if (info != null) {
+            return conversationInfoFromResult(info)
+        }
+        return null
     }
 }
 

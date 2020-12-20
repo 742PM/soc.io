@@ -19,7 +19,7 @@ interface ConversationService {
     fun ChangeInterlocutor(userId: UserId)
 
     /** Собирает пары собеседников из всех пользователей в очереди */
-    fun StartDialog(): List<UserId>
+    fun StartDialogs(): List<UserId>
 
     /** Добавляет пользователя в очередь
      *
@@ -57,9 +57,9 @@ class ConversationServiceImpl(
                 )
             )
             if (userId != conversation.firstInterlocutor)
-                queueRepository.put(userId)
-            else
                 queueRepository.put(conversation.firstInterlocutor)
+            else
+                queueRepository.put(conversation.secondInterlocutor)
         } else {
             throw Exception("User is in no dialog")
         }
@@ -79,7 +79,8 @@ class ConversationServiceImpl(
                     DateTime.now()
                 )
             )
-            queueRepository.put(userId)
+            queueRepository.put(conversation.firstInterlocutor)
+            queueRepository.put(conversation.secondInterlocutor)
 
         } else {
             throw Exception("User is in no dialog")
@@ -87,7 +88,7 @@ class ConversationServiceImpl(
     }
 
 
-    override fun StartDialog(): List<UserId> {
+    override fun StartDialogs(): List<UserId> {
         val all = queueRepository.all()
         return all.shuffled().windowed(2, 2).filter { it.size == 2 }.map {
             conversationRepository.insert(

@@ -16,16 +16,16 @@ abstract class BotCommand {
 
     abstract fun getKeyboardButtons(): List<String>
 
-    fun execute(bot: AbsSender, userMessage: String, chatId: Long) {
-        val receiverChatId = getReceiverChatId(chatId)
+    fun execute(bot: AbsSender, userMessage: String, userId: UserId) {
+        val receiverChatId = getReceiverChatId(userId)
         val messageText = getMessageText(userMessage)
         val keyboard = buildKeyboard(getKeyboardButtons())
 
-        run(UserId(chatId.toString()), bot)
+        run(userId, bot)
 
         val sendMessage = SendMessage
                 .builder()
-                .parseMode(ParseMode.MARKDOWNV2)
+                .parseMode(ParseMode.MARKDOWN)
                 .chatId(receiverChatId)
                 .text(messageText)
                 .replyMarkup(keyboard)
@@ -34,7 +34,7 @@ abstract class BotCommand {
         bot.execute(sendMessage)
     }
 
-    protected open fun getReceiverChatId(senderChatId: Long): String = senderChatId.toString()
+    protected open fun getReceiverChatId(sender: UserId): String = sender.value
 
     protected open fun run(userId: UserId, bot: AbsSender) {}
 

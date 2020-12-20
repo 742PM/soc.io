@@ -15,9 +15,8 @@ class ResendCommand(private val conversationService: ConversationService) : BotC
 
     override fun getKeyboardButtons(): List<String> = listOf(KeyboardButtons.ChangeDialog, KeyboardButtons.StopDialog)
 
-    override fun getReceiverChatId(senderChatId: Long): String {
-        val userId = UserId(senderChatId.toString())
-        val interlocutor = conversationService.GetCurrentInterlocutorInfo(userId)
+    override fun getReceiverChatId(sender: UserId): String {
+        val interlocutor = conversationService.GetCurrentInterlocutorInfo(sender)
 
         return interlocutor.value
     }
