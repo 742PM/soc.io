@@ -1,14 +1,23 @@
 package com.seven42.pm.soc.io.telegram.commands
 
+import com.seven42.pm.soc.io.domain.UserId
+import com.seven42.pm.soc.io.domain.conversation.ConversationService
 import com.seven42.pm.soc.io.telegram.KeyboardButtons
 
-class EnqueueCommand : BotCommand() {
+class EnqueueCommand(private val conversationService: ConversationService) : BotCommand() {
     override fun getMessageText(userMessage: String): String = """
         Идет поиск собеседника, как только он найдется - я напишу.
         Ты можешь в любой момент выйти из поиска, нажав кнопку внизу
     """.trimIndent()
 
-    override fun isValid(userMessage: String): Boolean = userMessage == KeyboardButtons.Find
+    override fun isValid(userMessage: String, userId: UserId): Boolean =
+            userMessage == KeyboardButtons.Find
+                    && !conversationService.IsInQueue(userId)
+                    && !conversationService.HasInterlocutor(userId)
 
     override fun getKeyboardButtons(): List<String> = listOf(KeyboardButtons.Stop)
+
+    override fun run(userId: UserId) {
+        conversationService.EnterQueue(userId)
+    }
 }
