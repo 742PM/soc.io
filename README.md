@@ -4,4 +4,4 @@ Service for social communications among people
 
 # API
 
-Available at: [link](https://soc-io.herokuapp.com/)
+Available at: [link](https://t.me/SocSocBot)
