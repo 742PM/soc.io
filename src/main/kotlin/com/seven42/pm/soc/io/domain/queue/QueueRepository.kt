@@ -4,8 +4,7 @@ import com.seven42.pm.soc.io.domain.User
 import com.seven42.pm.soc.io.domain.UserId
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.apache.log4j.Logger
 
 
 interface QueueRepository {
@@ -19,7 +18,7 @@ interface QueueRepository {
 const val UsersQueueTable = "users_queue"
 
 class SqlQueueRepository : QueueRepository {
-    private val logger: Logger = LoggerFactory.getLogger(SqlQueueRepository::class.java)
+    private val logger: Logger = Logger.getLogger(SqlQueueRepository::class.java)
 
     override fun put(user: UserId): Unit {
         logger.info("Inserting ${user} in $UsersQueueTable")

@@ -6,8 +6,7 @@ import com.seven42.pm.soc.io.domain.UserId
 import com.seven42.pm.soc.io.domain.queue.QueueRepository
 import org.jetbrains.exposed.sql.*
 import org.joda.time.DateTime
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.apache.log4j.Logger
 import java.util.*
 
 interface ConversationService {
@@ -41,7 +40,8 @@ class ConversationServiceImpl(
     val conversationRepository: ConversationRepository,
     val queueRepository: QueueRepository
 ) : ConversationService {
-    private val logger: Logger = LoggerFactory.getLogger(ConversationService::class.java)
+    private val logger: Logger = Logger.getLogger(ConversationService::class.java)
+//    private val logger: Logger = LoggerFactory.getLogger(ConversationService::class.java)
 
 
     override fun StopDialog(userId: UserId) {
