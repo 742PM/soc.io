@@ -6,7 +6,7 @@ import com.seven42.pm.soc.io.telegram.KeyboardButtons
 
 class ResendCommand(private val conversationService: ConversationService) : BotCommand() {
     override fun getMessageText(userMessage: String): String = """
-        **Собеседник пишет:**
+        *Собеседник пишет:*
         $userMessage
     """.trimIndent()
 
