@@ -17,12 +17,15 @@ class QueueManager(private val conversationService: ConversationService,
 
     private val secondsDelay: Long = 15
 
-
     fun run() {
         GlobalScope.launch {
             while (true) {
-                update()
-                delay(secondsDelay * 1000)
+                try {
+                    update()
+                    delay(secondsDelay * 1000)
+                } catch (e: Exception) {
+                    logger.error("Exception while updating queue: ", e)
+                }
             }
         }
     }
